@@ -1,0 +1,58 @@
+{
+  "_comment": "Copy the shape that matches your endpoint into the EXTERNAL_REST node's outputSpecification, replace the items element with your row shape, and DELETE fields the workflow does not read. Declaring unused fields costs tokens and gives the model more to misquote. See reference/ords-response-contract.md",
+
+  "envelopedCollection": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "number" },
+            "reference": { "type": "string" },
+            "status": { "type": "string" },
+            "created_date": { "type": "string" }
+          }
+        }
+      },
+      "hasMore": { "type": "boolean" },
+      "count": { "type": "number" },
+      "limit": { "type": "number" },
+      "offset": { "type": "number" }
+    },
+    "required": ["items", "hasMore"]
+  },
+
+  "envelopedCollectionWithLinks": {
+    "type": "object",
+    "properties": {
+      "items": { "type": "array", "items": { "type": "object" } },
+      "hasMore": { "type": "boolean" },
+      "count": { "type": "number" },
+      "limit": { "type": "number" },
+      "offset": { "type": "number" },
+      "links": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "rel": { "type": "string" },
+            "href": { "type": "string" }
+          }
+        }
+      }
+    },
+    "required": ["items", "hasMore"]
+  },
+
+  "_note_bare_object": "Handler modules returning a composed object (KPI and dashboard-summary endpoints, typically) have NO envelope. Declare that object directly - do not wrap it in items/hasMore.",
+
+  "bareObject": {
+    "type": "object",
+    "properties": {
+      "openCount": { "type": "number" },
+      "byStatus": { "type": "array", "items": { "type": "object" } }
+    }
+  }
+}

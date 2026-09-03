@@ -1,0 +1,28 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "oracle-aistudio",
+  "description": "Skills for the Oracle Fusion AI Studio ecosystem \u2014 bridging existing Oracle estates into agentic apps and workflows.",
+  "owner": {
+    "name": "Baig Mohammed"
+  },
+  "plugins": [
+    {
+      "name": "aistudio-ords",
+      "source": "./plugins/aistudio-ords",
+      "description": "Turn an existing Oracle REST Data Services estate on ATP into Fusion AI Studio agentic apps and workflows \u2014 path selection, ATP authentication, the ORDS response envelope, spec handling, and regression testing.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Baig Mohammed"
+      },
+      "category": "development",
+      "tags": [
+        "oracle",
+        "ords",
+        "atp",
+        "fusion-ai-studio",
+        "agentic-apps",
+        "rest"
+      ]
+    }
+  ]
+}

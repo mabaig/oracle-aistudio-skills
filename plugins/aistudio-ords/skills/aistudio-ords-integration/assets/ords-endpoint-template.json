@@ -1,0 +1,31 @@
+[
+  {
+    "_comment": "Endpoint blocks for do-create-tool --endpoints on the External REST path. Tokens written as {name} in resourcePath, headers or bodyTemplate are auto-extracted into token parameters. See reference/choosing-a-path.md",
+
+    "name": "listTickets",
+    "description": "List service tickets, newest first. Supports paging via limit and offset.",
+    "operationType": "GET",
+    "resourcePath": "/tickets",
+    "parameterDefinitions": [
+      { "name": "limit",  "dataType": "number", "isToken": false },
+      { "name": "offset", "dataType": "number", "isToken": false },
+      { "name": "status", "dataType": "string", "isToken": false }
+    ],
+    "headers": [],
+    "sampleQueries": [
+      "Show me the open tickets",
+      "Which tickets are still unassigned?"
+    ]
+  },
+  {
+    "name": "getTicket",
+    "description": "Fetch one service ticket by its id.",
+    "operationType": "GET",
+    "resourcePath": "/tickets/{ticketId}",
+    "parameterDefinitions": [
+      { "name": "ticketId", "dataType": "string", "isToken": true }
+    ],
+    "headers": [],
+    "sampleQueries": ["Show me ticket 10428"]
+  }
+]

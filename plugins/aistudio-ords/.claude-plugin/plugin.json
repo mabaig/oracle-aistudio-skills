@@ -1,0 +1,20 @@
+{
+  "name": "aistudio-ords",
+  "description": "Build Oracle Fusion AI Studio agentic apps and workflows on an existing ORDS estate. Covers choosing between the External REST, Connector and NonFusionOracleSource paths, authentication against ORDS on ATP, modelling the ORDS response envelope into a workflow node's outputSpecification, subsetting AutoREST OpenAPI specs, and regression-testing ORDS-backed workflows.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Baig Mohammed"
+  },
+  "keywords": [
+    "oracle",
+    "ords",
+    "apex",
+    "atp",
+    "autonomous-database",
+    "fusion-ai-studio",
+    "agentic-apps",
+    "rest",
+    "openapi",
+    "oracle-fusion"
+  ]
+}

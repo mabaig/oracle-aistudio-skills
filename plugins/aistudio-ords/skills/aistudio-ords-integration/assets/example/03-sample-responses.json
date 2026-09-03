@@ -1,0 +1,32 @@
+{
+  "_comment": "Real ORDS response shapes from the module in 02-ords-module.sql. Note that /summary has NO envelope - this is the shape people forget exists.",
+
+  "GET /servicedesk/tickets?limit=25&offset=0": {
+    "items": [
+      { "reference": "TKT-1001", "subject": "VPN drops every few minutes", "status": "OPEN", "priority": "HIGH", "queue_code": "NETWORK", "assigned_to": null, "created_date": "2026-09-01T09:14:22Z" },
+      { "reference": "TKT-1004", "subject": "Switch port flapping in rack 4", "status": "OPEN", "priority": "HIGH", "queue_code": "NETWORK", "assigned_to": "p.osei", "created_date": "2026-09-01T08:02:10Z" }
+    ],
+    "hasMore": false,
+    "limit": 25,
+    "offset": 0,
+    "count": 2,
+    "links": [
+      { "rel": "self",        "href": "https://<host>/ords/<schema>/servicedesk/tickets" },
+      { "rel": "describedby", "href": "https://<host>/ords/<schema>/metadata-catalog/servicedesk/item" }
+    ]
+  },
+
+  "GET /servicedesk/summary": {
+    "openCount": 3,
+    "highCount": 2,
+    "unassigned": 2
+  },
+
+  "GET /servicedesk/tickets?status=ARCHIVED (empty result)": {
+    "items": [],
+    "hasMore": false,
+    "limit": 25,
+    "offset": 0,
+    "count": 0
+  }
+}
