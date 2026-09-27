@@ -1,31 +1,30 @@
 [
   {
-    "_comment": "Endpoint blocks for do-create-tool --endpoints on the External REST path. Tokens written as {name} in resourcePath, headers or bodyTemplate are auto-extracted into token parameters. See reference/choosing-a-path.md",
-
-    "name": "listTickets",
-    "description": "List service tickets, newest first. Supports paging via limit and offset.",
+    "_comment": "Template for ORDS endpoints on the External REST path. Put every workflow-settable value in resourcePath/headers/bodyTemplate as a {token}; tokens become EXTERNAL_REST node inputs, and ORDS binds empty token values as NULL. PL/SQL bodies come from handler source, not the generated spec. See reference/external-rest-endpoints.md",
+    "name": "listRecords",
+    "description": "What the endpoint returns, which filters it accepts and their allowed values, the page size, and that the caller must check hasMore.",
     "operationType": "GET",
-    "resourcePath": "/tickets",
-    "parameterDefinitions": [
-      { "name": "limit",  "dataType": "number", "isToken": false },
-      { "name": "offset", "dataType": "number", "isToken": false },
-      { "name": "status", "dataType": "string", "isToken": false }
-    ],
-    "headers": [],
-    "sampleQueries": [
-      "Show me the open tickets",
-      "Which tickets are still unassigned?"
-    ]
+    "resourcePath": "/<template>?<filter>={<filter>}&limit={limit}&offset={offset}",
+    "headers": []
   },
   {
-    "name": "getTicket",
-    "description": "Fetch one service ticket by its id.",
+    "name": "getRecord",
+    "description": "Fetch one record by key.",
     "operationType": "GET",
-    "resourcePath": "/tickets/{ticketId}",
-    "parameterDefinitions": [
-      { "name": "ticketId", "dataType": "string", "isToken": true }
+    "resourcePath": "/<template>/{<key>}",
+    "headers": []
+  },
+  {
+    "name": "updateRecords",
+    "description": "What changes, which states are skipped, what the response reports. Changes data: call only after the user confirms.",
+    "operationType": "POST",
+    "resourcePath": "/<template>/<action>",
+    "headers": [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      }
     ],
-    "headers": [],
-    "sampleQueries": ["Show me ticket 10428"]
+    "bodyTemplate": "{\"keys\":{keys},\"<field>\":\"{<field>}\"}"
   }
 ]
