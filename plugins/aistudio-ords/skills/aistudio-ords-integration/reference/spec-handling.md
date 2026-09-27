@@ -11,9 +11,14 @@ to Connector.
 ## Where ORDS publishes specs
 
 ```
-https://<host>/ords/<schema>/open-api-catalog/<module>/     # module-level
-https://<host>/ords/<schema>/metadata-catalog/              # discovery index
+https://<host>/ords/<schema-alias>/open-api-catalog/                 # index of modules and objects
+https://<host>/ords/<schema-alias>/open-api-catalog/<module>/        # one module's OpenAPI document
+https://<host>/ords/<schema-alias>/metadata-catalog/                 # discovery index
 ```
+
+[ords-url-and-catalog.md](ords-url-and-catalog.md) explains each URL segment,
+how to fetch a protected module's document with a token, and the
+`scripts/ords_catalog.py` helper (`modules`, `spec`, `subset`).
 
 A response's `links[rel=describedby]` also points at the metadata catalog entry
 for that resource — a quick way to find the spec for one endpoint you already
@@ -68,7 +73,16 @@ is nested as `openApi: { url, urlAuth }` and has nothing to do with calls to the
 API afterwards.
 
 If your spec endpoint is protected, the simplest route is to fetch it yourself
-and pass `--spec-file`, sidestepping `--url-auth` entirely.
+and pass `--spec-file`, sidestepping `--url-auth` entirely:
+
+```bash
+python3 scripts/ords_catalog.py spec --base "$BASE" --module <module> \
+  --auth client-credentials -o module-openapi.json
+python3 scripts/ords_catalog.py subset module-openapi.json --paths /<template> -o trimmed.json
+```
+
+`subset` keeps the chosen paths plus every component they reference, and stops
+with an error on a dangling `$ref` in the source.
 
 Runtime auth is a separate problem — see [auth-on-atp.md](auth-on-atp.md).
 

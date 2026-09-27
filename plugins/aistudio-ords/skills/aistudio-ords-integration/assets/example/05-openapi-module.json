@@ -1,0 +1,189 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ORDS generated API for servicedesk",
+    "version": "1.0.0",
+    "description": "SAMPLE - the shape of an ORDS module OpenAPI document, as served from https://<host>/ords/<schema-alias>/open-api-catalog/servicedesk/. Placeholders only."
+  },
+  "servers": [
+    {
+      "url": "https://<host>/ords/<schema-alias>/servicedesk"
+    }
+  ],
+  "paths": {
+    "/tickets": {
+      "get": {
+        "summary": "List service tickets, newest first. Optional status filter; paged with limit and offset.",
+        "operationId": "listTickets",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enveloped collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{reference}": {
+      "get": {
+        "summary": "Fetch one ticket by its reference, e.g. TKT-1001.",
+        "operationId": "getTicket",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enveloped collection with at most one item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/summary": {
+      "get": {
+        "summary": "Ticket counts: open, high priority and unassigned. Returns a bare object with no envelope.",
+        "operationId": "getSummary",
+        "responses": {
+          "200": {
+            "description": "Bare object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Summary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "queue_code": {
+            "type": "string"
+          },
+          "assigned_to": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TicketCollection": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ticket"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "openCount": {
+            "type": "integer"
+          },
+          "highCount": {
+            "type": "integer"
+          },
+          "unassigned": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

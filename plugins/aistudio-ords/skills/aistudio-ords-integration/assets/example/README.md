@@ -8,7 +8,8 @@ end on a clean pod.
 | `01-schema.sql` | Two tables and five rows |
 | `02-ords-module.sql` | Handler-based ORDS module, three endpoints |
 | `03-sample-responses.json` | What each endpoint actually returns |
-| `04-tool-endpoints.json` | Endpoint blocks for the External REST path |
+| `04-tool-endpoints.json` | Endpoint blocks for the External REST path (resource paths relative to `https://<host>/ords/<schema-alias>`) |
+| `05-openapi-module.json` | Sample of the OpenAPI document ORDS serves at `/open-api-catalog/servicedesk/` — use it to try `scripts/ords_catalog.py` offline |
 
 ## Why handlers instead of AutoREST
 
@@ -31,6 +32,18 @@ The module has no authentication, so the **External REST** path is the least
 work — the CLI's `authInfo.type = "none"` restriction costs you nothing here.
 To practise the Connector flow instead, enable OAuth2 on the module first and
 read `reference/auth-on-atp.md`.
+
+## Walk it through
+
+[reference/end-to-end-walkthrough.md](../../reference/end-to-end-walkthrough.md)
+takes this module from DDL to a tested app panel, step by step.
+
+Offline, without a database:
+
+```bash
+python3 ../../scripts/ords_catalog.py endpoints 05-openapi-module.json
+python3 ../../scripts/ords_catalog.py subset 05-openapi-module.json --paths /summary -o summary-only.json
+```
 
 ## Try the empty case
 

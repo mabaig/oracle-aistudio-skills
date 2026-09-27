@@ -57,8 +57,17 @@ brittle `contains` assertion costs you all semantic signal on that test.
 - **Exact assertions** for fixed contracts: fallback messages, control results.
 - **Judge rubric** for grounding: require the response to cite values from the
   replayed ORDS data and invent no identifiers. Grounding is where ORDS-backed
-  agents actually fail — a plausible case number that appears nowhere in the
-  payload is the characteristic failure.
+  agents actually fail — a plausible ticket reference that appears nowhere in
+  the payload is the characteristic failure.
+
+## Keep one live smoke run
+
+Replay makes the suite stable, which also means it never touches the live ORDS
+call. A suite can stay green while every live endpoint returns `401` because an
+environment lost its UI-added authentication. After each deploy to a new
+environment, each ORDS privilege change and each tool save, run every
+ORDS-backed workflow once against live data and check the ORDS node's status in
+the trace. See [diagnosing-ords.md](diagnosing-ords.md).
 
 ## Watch the cost
 
@@ -82,3 +91,4 @@ information, reports **fewer** AI units. Always check `computedCases` against
 - [ ] Empty-collection variation covered
 - [ ] Judge rubric requires grounding in replayed data
 - [ ] AI units baselined under a run label
+- [ ] One live (not replayed) smoke run per ORDS-backed workflow after each deploy, privilege change or tool save

@@ -1,15 +1,26 @@
 [
   {
-    "_comment": "Endpoint blocks for do-create-tool --endpoints on the External REST path. Tokens written as {name} in resourcePath, headers or bodyTemplate are auto-extracted into token parameters. See reference/choosing-a-path.md",
-
+    "_comment": "Endpoint blocks for the External REST path. resourcePath is relative to the tool's instance URL https://<host>/ords/<schema-alias>, so it starts with the module base path. ORDS path parameters (:name) are written {name}; tokens in resourcePath, headers or bodyTemplate are extracted as token parameters. Confirm field names against the base aistudio skill before creating the tool. See reference/ords-url-and-catalog.md",
     "name": "listTickets",
-    "description": "List service tickets, newest first. Supports paging via limit and offset.",
+    "description": "List service tickets, newest first. Optional status filter (OPEN, IN_PROGRESS, RESOLVED). Paged: pass limit and offset and check hasMore.",
     "operationType": "GET",
-    "resourcePath": "/tickets",
+    "resourcePath": "/servicedesk/tickets",
     "parameterDefinitions": [
-      { "name": "limit",  "dataType": "number", "isToken": false },
-      { "name": "offset", "dataType": "number", "isToken": false },
-      { "name": "status", "dataType": "string", "isToken": false }
+      {
+        "name": "status",
+        "dataType": "string",
+        "isToken": false
+      },
+      {
+        "name": "limit",
+        "dataType": "number",
+        "isToken": false
+      },
+      {
+        "name": "offset",
+        "dataType": "number",
+        "isToken": false
+      }
     ],
     "headers": [],
     "sampleQueries": [
@@ -19,13 +30,30 @@
   },
   {
     "name": "getTicket",
-    "description": "Fetch one service ticket by its id.",
+    "description": "Fetch one service ticket by its reference, for example TKT-1001. Returns an enveloped collection with at most one item.",
     "operationType": "GET",
-    "resourcePath": "/tickets/{ticketId}",
+    "resourcePath": "/servicedesk/tickets/{reference}",
     "parameterDefinitions": [
-      { "name": "ticketId", "dataType": "string", "isToken": true }
+      {
+        "name": "reference",
+        "dataType": "string",
+        "isToken": true
+      }
     ],
     "headers": [],
-    "sampleQueries": ["Show me ticket 10428"]
+    "sampleQueries": [
+      "Show me ticket TKT-1001"
+    ]
+  },
+  {
+    "name": "getSummary",
+    "description": "Ticket counts - open, high priority and unassigned. Returns a bare JSON object with no items envelope.",
+    "operationType": "GET",
+    "resourcePath": "/servicedesk/summary",
+    "parameterDefinitions": [],
+    "headers": [],
+    "sampleQueries": [
+      "How many tickets are open?"
+    ]
   }
 ]

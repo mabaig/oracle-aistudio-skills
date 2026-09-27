@@ -35,9 +35,30 @@ workflow" — and the skill loads.
 | **Auth on ATP** | The CLI cannot write auth into an External REST tool. What that means and both routes around it |
 | **Response contract** | ORDS returns three different shapes. Assuming the envelope is a real bug |
 | **Spec handling** | The hardcoded OpenAPI 3.0 constraint, and why to import a module spec rather than a whole AutoREST schema |
-| **Testing** | Record at the ORDS boundary, replay from file, assert the path, cover the empty collection |
+| **URLs and catalogs** | URL anatomy, splitting instance URL from resource path, `:name` → `{name}`, fetching a module's OpenAPI document (with or without a token), filters and paging |
+| **Diagnosing** | A curl-first triage ladder, what `401`/`403`/`404`/`405`/`503`/`555` mean from ORDS, and why the `.tool` file can't prove auth |
+| **Agent safety** | Read/write tool split, confirmation gates in the workflow graph, safe write handlers, failure isolation |
+| **ORDS setup SQL** | Inventory queries on `USER_ORDS_*`, privileges, roles and OAuth client samples |
+| **Testing** | Record at the ORDS boundary, replay from file, assert the path, cover the empty collection, keep a live smoke run |
+| **Walkthrough** | Every step, end to end, on the sample service-desk module |
 
-### Three things you will hit
+### Helper script
+
+`scripts/ords_catalog.py` (Python 3, standard library only, never prints secrets)
+lists the modules in an ORDS OpenAPI catalog, downloads a module's spec, turns it
+into draft AI Studio endpoint blocks, subsets it for Connector import, and checks
+any endpoint's status and envelope shape:
+
+```bash
+S=plugins/aistudio-ords/skills/aistudio-ords-integration/scripts/ords_catalog.py
+BASE="https://<host>/ords/<schema-alias>"
+python3 $S modules   --base "$BASE"
+python3 $S spec      --base "$BASE" --module <module> -o module-openapi.json
+python3 $S endpoints module-openapi.json -o endpoints.json
+python3 $S check     --base "$BASE" --path /<module>/<template> --auth client-credentials
+```
+
+### Things you will hit
 
 - **Authentication cannot be scripted on the External REST path.** The CLI
   forces `authInfo.type = "none"` and rejects credential fields. Sound secret
@@ -47,12 +68,18 @@ workflow" — and the skill loads.
   popular fix and it fails silently at row 201.
 - **Not every ORDS response is enveloped.** Summary and KPI handlers return a
   bare object, often beside enveloped endpoints in the same module.
+- **The `.tool` file can't prove auth works.** A tool authenticated in the UI can
+  still read `authInfo.type: "none"`; only a live call proves it.
+- **An agent is offered every endpoint of an attached tool** — including the
+  writes. Split read and write tools and gate writes in the workflow graph.
+- **Green replayed tests, empty app.** Keep one live smoke run per deploy.
 
 ### Worked example
 
-A service-desk module — DDL, ORDS handlers, sample responses, tool endpoints —
-small enough to run from zero on a clean pod, and deliberately exercising all
-three response shapes.
+A service-desk module — DDL, ORDS handlers, sample responses, a sample OpenAPI
+document, tool endpoints — small enough to run from zero on a clean pod, and
+deliberately exercising all three response shapes. The walkthrough reference
+takes it through every step.
 
 ## Tested against
 

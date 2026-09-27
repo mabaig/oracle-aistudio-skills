@@ -79,6 +79,13 @@ For scale: a production tool we built carries **14 hand-authored endpoints in a
 single `.tool` file**. That is tolerable once and painful to maintain. Past
 roughly 15 endpoints, the Connector path's spec import pays for its extra setup.
 
+## Whichever path: split read from write
+
+An agent is offered every endpoint of a tool attached to it. Put `GET`
+endpoints in one tool and write endpoints in another, and attach the write tool
+only to an agent behind a confirmation gate. See
+[agent-safety-and-resilience.md](agent-safety-and-resilience.md).
+
 ## What does not change whichever path you pick
 
 - The ORDS response envelope still has to be modelled by hand on every

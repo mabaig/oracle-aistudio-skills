@@ -33,6 +33,11 @@ Use when ORDS is open or IP-restricted, or when one manual step is acceptable.
 2. Validate and, if the user asks, save it.
 3. In AI Studio, open the tool and add authentication.
 4. Set the instance URL if you left it empty at creation.
+5. **Prove it with a live call.** Run the workflow against live data and read
+   the ORDS node's status in the trace. Do not rely on the `.tool` file: a
+   fetched tool can still read `authInfo.type: "none"` after authentication
+   was added in the UI. See [diagnosing-ords.md](diagnosing-ords.md).
+6. After any later CLI save of this tool, repeat step 5.
 
 **What this costs you.** The tool is unusable until step 3. That step cannot be
 scripted, replayed in CI, or reproduced on a second pod from source alone. If
@@ -77,6 +82,9 @@ Note that `--url-auth` on definition generation authenticates **fetching the
 spec URL** — not calls to the API. It is nested as `openApi: { url, urlAuth }`.
 Confusing these two is a common and frustrating mistake.
 
+Sample SQL to create the ORDS role, privilege and OAuth client these routes
+rely on is in [ords-setup-sql.md](ords-setup-sql.md).
+
 ## ORDS-side auth options
 
 **OAuth2 client credentials** — the usual choice for machine-to-machine. Register
@@ -112,6 +120,8 @@ common failure is a token that is valid but lacks the privilege: ORDS answers
 | Works in the UI, fails from the workflow | Tool still `authInfo.type = "none"` — the UI step was skipped |
 | Auth fine, `404` | Wrong `/ords/<schema>/<module>/<template>` segment, or module not published |
 | Token works then stops | Not refreshing; client-credentials tokens expire |
+| Tool file says `authInfo.type: "none"` but calls succeed | Normal — the file does not show UI-added auth; prove auth by a live call |
+| `555` | Not auth at all: the handler SQL raised an error |
 
 ## Choosing
 

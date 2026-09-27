@@ -41,7 +41,7 @@ schema that requires `links`.
 gives you exactly what the SQL produced:
 
 ```json
-{ "byTotalOpenCase": 42, "byCaseType": [ ], "byTotalLPNHold": 7 }
+{ "openCount": 3, "highCount": 2, "unassigned": 2 }
 ```
 
 Shape 3 is easy to miss because it appears alongside enveloped endpoints in the
@@ -65,21 +65,23 @@ will silently truncate at 25 the moment the table grows.
 **The wrong fix — and it is the common one:**
 
 ```
-resourcePath: /quality/case-audit?limit=200
+resourcePath: /servicedesk/tickets?limit=200
 ```
 
-We shipped that. It works until 201 rows exist, then fails silently and
+It is easy to ship. It works until 201 rows exist, then fails silently and
 invisibly, because `hasMore: true` is sitting right there in a response nobody
 reads.
 
 **Do this instead.** Expose `limit` and `offset` as real parameter definitions
-so pagination is visible in the workflow:
+so pagination is visible in the workflow (the resource path is relative to the
+tool's instance URL, which ends at the schema alias — see
+[ords-url-and-catalog.md](ords-url-and-catalog.md)):
 
 ```json
 {
   "name": "listTickets",
   "operationType": "GET",
-  "resourcePath": "/tickets",
+  "resourcePath": "/servicedesk/tickets",
   "parameterDefinitions": [
     { "name": "limit",  "dataType": "number", "isToken": false },
     { "name": "offset", "dataType": "number", "isToken": false }
@@ -120,10 +122,11 @@ ORDS rows come straight from your table, which usually means audit columns,
 surrogate keys and duplicated denormalised fields. Every one of them is
 tokens spent and a chance for the model to cite something meaningless.
 
-A real row we shipped carried 22 columns including `created_by`,
-`last_updated_by`, `last_updated_date`, `source_application`, `error_msg`, both
-`case_type_id` and `case_type_name`, and a `total_results` window-function
-column repeated on every row.
+A typical `SELECT *` or AutoREST row carries twenty or more columns: audit
+columns such as `created_by`, `last_updated_by` and `last_updated_date`, both a
+foreign key and its denormalised name (`queue_id` and `queue_name`), internal
+status or error columns, and sometimes a window-function total repeated on
+every row.
 
 Trim at the ORDS layer, not in the workflow. A handler module selecting the
 eight columns the agent actually needs is cheaper, faster and easier to ground
