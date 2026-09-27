@@ -1,0 +1,19 @@
+{
+  "_comment": "Illustrative only: what an EXTERNAL_REST node for listTickets looks like after the aistudio CLI creates it and the pod normalizes it. Create nodes with the base aistudio skill's node commands, never by pasting JSON. Note: node inputs are exactly the endpoint's {tokens}; every value is a string; outputSpecification is hand-written and declares only the fields downstream nodes read, plus the paging envelope. The instance URL lives on the tool, not the node.",
+  "id": "3",
+  "code": "FETCH_OPEN_TICKETS",
+  "type": "EXTERNAL_REST",
+  "metadata": {
+    "name": "Fetch Open Tickets",
+    "description": "OPEN tickets, newest first, first page of 100.",
+    "externalRestToolCode": "SERVICE_DESK_ORDS",
+    "functionName": "listTickets"
+  },
+  "inputs": [
+    { "id": "3_status", "name": "status", "type": "string", "value": "OPEN" },
+    { "id": "3_limit",  "name": "limit",  "type": "string", "value": "100" },
+    { "id": "3_offset", "name": "offset", "type": "string", "value": "0" }
+  ],
+  "outcomes": { "success": "4" },
+  "outputSpecification": "{\n  \"type\": \"object\",\n  \"required\": [\"items\", \"hasMore\"],\n  \"properties\": {\n    \"items\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"reference\":   { \"type\": \"string\" },\n          \"subject\":     { \"type\": \"string\" },\n          \"priority\":    { \"type\": \"string\" },\n          \"queue_code\":  { \"type\": \"string\" },\n          \"assigned_to\": { \"type\": \"string\" }\n        }\n      }\n    },\n    \"hasMore\": { \"type\": \"boolean\" },\n    \"count\":   { \"type\": \"number\" },\n    \"limit\":   { \"type\": \"number\" },\n    \"offset\":  { \"type\": \"number\" }\n  }\n}"
+}
